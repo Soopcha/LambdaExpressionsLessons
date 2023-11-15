@@ -81,14 +81,37 @@ java.util.function
     Finction<Integer, String> convert = x.valueOf(x)+"долларов";
     System.out.println(convert.apply(5)); //5 доларов
 
+есть дефолтный метод
+default <V> Function<V,R> compose(Function<? super V,? extends T>
+before)
+позволяет комбинировать лямда выражения
+
+есть ещё addThen он в другом порядке совмещает
+
+identity - единичный метод статик - единичное лямда выражение
+превращает выражение само в себя   оно ничего не делает это выражение
 ● BiFunction<T, U, R> - R apply(T t, U u)
 ● Predicate<T> - boolean test(T t)
+проверяет да нет
+
 ● BiPredicate<T, U> - boolean test(T t, U u)
 ● Consumer<T> - void accept(T t)
+потребитель
+возвращает только void
+
 ● BiConsumer<T, U>
 ● Supplier<T> - T get()
+поставщик
+ничего не принимает но что-то возвращает
+
 ● UnaryOperator<T> - T apply(T t)
+унарный оператор те функция   f(x) = y
+
 ● BinaryOperator<T> - T apply(T t1, T t2)
+
+
+би - тоже самое но принимают два оператора
+
 
 
 
@@ -120,5 +143,11 @@ public class Main {
         // единственный минус: с помощью ламда выражений нельзя реализовать
         // интерфейс где больше одного метода
 
+
+
+
+        PredicateTest.test();
+        System.out.println("  -----  ");
+        PredicateTest.test2();
     }
 }
