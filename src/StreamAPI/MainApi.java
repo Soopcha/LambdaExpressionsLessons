@@ -121,9 +121,12 @@ Stream<String> stream = Stream.<String>builder()
 .build();
  */
 
+import StreamAPI.model.Person;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -308,6 +311,58 @@ Optional Value check value  методы для проверки знач
         System.out.println("Maximum odd integer is " + value);
 }
          */
+        testOdd3();
+
+
+        /*
+        ОПЕРАЦИИ над стримами
+
+        Debugging a Stream Pipeline
+        peek - отладочная операция, делает стрим более подходящим для дебага
+
+        int sum = Stream.of(1, 2, 3, 4, 5)
+        .peek(e -> System.out.println("Taking integer: " + e))
+        .filter(n -> n % 2 == 1)
+        .peek(e -> System.out.println("Filtered integer: " + e))
+        .map(n -> n * n)
+        .peek(e -> System.out.println("Mapped integer: " + e))
+        .reduce(0, Integer::sum);
+
+
+
+        Stream ForEach- выполняет действие с каждым эл стрима
+• void forEach(Consumer<? super T> action)
+• void forEachOrdered(Consumer<? super T> action)
+-поддерживает порядок добавления
+
+
+Stream forEach operation - фор ич терминальная (ласт ) операция
+
+List<Person> persons = ….
+persons.stream()
+    .filter(Person::isFemale)
+    .forEach(p -> p.setIncome(p.getIncome() * 1.10));
+
+
+    Stream map operation - не мапа, преобразование обьектов
+
+    Stream map operation - не терминальная, а интермидия операция
+• <R> Stream<R> map(Function<? super T,? extends R> mapper)
+• DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper)
+• IntStream mapToInt(ToIntFunction<? super T> mapper)
+• LongStream mapToLong(ToLongFunction<? super T> mapper)
+
+Stream map operation  пример
+IntStream.rangeClosed(1, 5)
+    .map(n -> n * n)
+    .forEach(System.out::println);
+
+personsList()
+    .stream()
+    .map(Person::getName)
+    .forEach(System.out::println);
+         */
+        testMap();
     }
 
     public static void testOpt(){
@@ -325,5 +380,43 @@ Optional Value check value  методы для проверки знач
 
         Optional<String> str2 = Optional.ofNullable(null);
         str2.ifPresentOrElse(x -> System.out.println(x), ()-> System.out.println("Str is empty"));
+    }
+
+    public static void testOdd3() {
+        OptionalInt maxOdd = IntStream.of(10, 20, 30)
+                .filter(n -> n % 2 == 1) //ищем чтобы ост от деления на 2 = 1
+                .max();
+        if (maxOdd.isPresent()) {
+            int value = maxOdd.getAsInt();
+            System.out.println("Maximum odd integer is " + value);
+        } else {
+            System.out.println("No Maximum odd integer");
+        }
+    }
+
+   /* public static void testOdd4() {
+        Integer maxOdd = Stream.of(new Integer(11), new Integer(20),new Integer(30))
+                .filter(n -> n % 2 == 1) //ищем чтобы ост от деления на 2 = 1
+                .findFirst()
+                .orElse(null);
+
+        if (maxOdd != null) {
+            int value = maxOdd.getAsInt();
+            System.out.println("Maximum odd integer is " + value);
+        } else {
+            System.out.println("No Maximum odd integer");
+        }
+    }
+
+    */
+
+    public static void testMap(){
+        Stream<Person> personStream = Stream.of(new Person("abc",20), new Person("sds",30));
+        Stream<String> mapStream = personStream.map(x -> {
+           return x.getName();
+        }); //мапой преобразовали в стрим строк
+        mapStream.forEach(x -> {
+            System.out.println(x);
+        });
     }
 }
