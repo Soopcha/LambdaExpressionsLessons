@@ -123,6 +123,7 @@ Stream<String> stream = Stream.<String>builder()
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -132,7 +133,7 @@ public class MainApi {
         List<String> list = new ArrayList<>();
         Stream<String> stream = list.stream();
 
-        Stream<String> stream2 = Stream.of("","");
+        Stream<String> stream2 = Stream.of("", "");
 
         //задание стрима с помощью билдера
         Stream<String> stream3 = Stream.<String>builder()
@@ -166,10 +167,163 @@ public class MainApi {
         IntStream oneToFive = IntStream.range(1, 6);   // генерируем стрим на интервале от 1 до 6
         IntStream oneToFive = IntStream.rangeClosed(1, 5);  // это закрытый интервал
          */
-        IntStream intStream = IntStream.range(1,9);
+        IntStream intStream = IntStream.range(1, 9);//обьявили он ещё не робит
         System.out.println("пауза");
-        intStream.forEach(x ->{  //мы попали в терминальную операцию и только тут стрим начал работать
+        intStream.forEach(x -> {  //мы попали в терминальную операцию и только тут стрим начал работать
             System.out.println(x);
         });
+
+        /*
+        Empty Streams не null но пустой стрим полноценный
+    Stream<String> stream = Stream.empty();
+    IntStream numbers = IntStream.empty();
+
+
+    Streams from Functions позволяют генерировать обьекты любых типов кастомно
+    ● static <T> Stream<T> iterate(T seed, UnaryOperator<T> f) - есть нач знач
+    ● static <T> Stream<T> generate(Supplier<T> s)
+         */
+        System.out.println();
+        System.out.println();
+
+/*
+    Stream.iterate() method
+    ● static <T> Stream<T> iterate(T seed, UnaryOperator<T> f)
+    seed, f(seed), f(f(seed)), f(f(f(seed)))
+    Stream<Long> naturalNumbers = Stream.iterate(1L, n -> n + 1);
+    Stream<Long> oddNaturalNumbers = Stream.iterate(1L, n -> n + 2);
+ */
+        // Stream.iterate() method
+        Stream<Long> naturalNumbers = Stream.iterate(1L, n -> n + 1);
+        naturalNumbers.limit(5).forEach(x -> System.out.println(x));
+
+        System.out.println();
+        System.out.println();
+
+
+        /*  iterate каждое знач зависит от придыдущего
+        Stream.iterate() method
+    Stream<Long> tenNaturalNumbers = Stream.iterate(1L, n -> n + 1).limit(10);
+    Stream.iterate(1L, n -> n + 2)
+        .limit(5)            //limit огр набор знач который будет выполнен или обработан  этой конст 5 тут
+        .forEach(System.out::println);
+         */
+
+        /* generate - генерирует типы знач но не использует seed не зависит от предыдущ знач
+        Stream.generate() method
+    ● static <T> Stream<T> generate(Supplier<T> s)
+    Stream.generate(Math::random)
+        .limit(5)
+        .forEach(System.out::println);
+    IntStream zeroes = IntStream.generate(() -> 0);
+         */
+
+
+        Stream<Long> tenNaturalNumbers = Stream.iterate(0L, n -> n + 1)
+                .limit(10);
+        tenNaturalNumbers
+                .sorted()
+                .limit(5)
+                .forEach(x-> System.out.println(x));
+        //ну или просто лимит первый должен быть чтобы не поиснуть
+        //.limit(5)
+        //.sorted()
+        System.out.println();
+        System.out.println();
+
+        Stream.generate(()->Math.random())
+                .limit(5)
+                .forEach(System.out::println);
+
+
+        Stream.generate(()->0)
+                .limit(3)
+                .forEach(System.out::println);
+        System.out.println();
+        System.out.println();
+
+        /*
+        Получение стрима из масива
+        IntStream numbers = Arrays.stream(new int[]{1, 2, 3});
+        Stream<String> names = Arrays.stream(new String[] {"Ken", "Jeff"});
+
+
+        Получение стрима из масива Collection
+        Set<String> names = new HashSet<>();
+        names.add("Ken");
+        names.add("jeff");
+
+        Stream<String> sequentialStream = names.stream();
+        Stream<String> parallelStream = names.parallelStream();
+         */
+
+
+        /*
+
+        тип Optional Value
+
+        Optional Value
+     Person ken = new Person(1, "Ken", Person.Gender.MALE, null, 6000.0);
+     int year = ken.getDob().getYear(); // Throws a NullPointerException если null ken.getDob().getYear() вывело
+     System.out.println("Ken was born in the year " + year);
+
+Optional Value create - необязательный тип, обертка вокргу реал знач
+● Optional<T> wrapper
+○ <T> Optional<T> empty()   - если не оборачивается вокруг чего-то
+○ <T> Optional<T> of(T value) throws NPE   - создание обьекта
+○ <T> Optional<T> ofNullable(T value)      - создание обьекта
+
+Optional Value create (примеры)
+Optional<String> empty = Optional.empty();
+Optional<String> str = Optional.of("Hello");
+String nullableString = ""; // get a string that may be null...
+Optional<String> str2 = Optional.of(nullableString);
+
+
+Optional Value как получить знач
+● T get() throws NPE  // NullPointerExeption
+● T orElse(T defaultValue)  //возвращает знач либо дефолтное знач
+● T orElseGet(Supplier<? extends T> defaultSupplier)
+● <X extends Throwable> T orElseThrow(Supplier<? extends X>
+exceptionSupplier) throws X
+
+
+Optional Value check value  методы для проверки знач
+● boolean isPresent()
+● void ifPresent(Consumer<? super T> consumer)
+         */
+        testOpt();
+        System.out.println();
+        testOpt2();
+
+
+
+        /*
+        Optional Value
+    OptionalInt maxOdd = IntStream.of(10, 20, 30)
+                          .filter(n -> n % 2 == 1)
+                          .max();
+    if (maxOdd.isPresent()) {
+        int value = maxOdd.getAsInt();
+        System.out.println("Maximum odd integer is " + value);
+}
+         */
+    }
+
+    public static void testOpt(){
+        Optional<String> str = Optional.of("Hello");
+        if (str.isPresent()) {//проверяем есть ли значение
+            String value = str.get();
+            System.out.println("Optional contains " + value);
+        }
+        else { System.out.println("Optional is empty.");}
+    }
+
+    public static void testOpt2(){
+        Optional<String> str = Optional.of("Hello");
+        str.ifPresentOrElse(x -> System.out.println(x), ()-> System.out.println("Str is empty"));
+
+        Optional<String> str2 = Optional.ofNullable(null);
+        str2.ifPresentOrElse(x -> System.out.println(x), ()-> System.out.println("Str is empty"));
     }
 }
